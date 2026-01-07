@@ -1,0 +1,23 @@
+version: "3.8"
+
+services:
+  # 3 backend API containers (scaling)
+  api1:
+    build: ./backend
+  api2:
+    build: ./backend
+  api3:
+    build: ./backend
+
+  # Nginx: serve frontend + load balance ke api1..api3
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "8080:80"
+    volumes:
+      - ./frontend:/usr/share/nginx/html:ro
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - api1
+      - api2
+      - api3
